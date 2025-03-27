@@ -1,17 +1,15 @@
 import { initializeApp } from 'firebase/app';
-
-// Initialize Firebase
+import {getAuth} from 'firebase/auth'
+import {getFirestore} from 'firebase/firestore'
 const firebaseConfig = {
-  apiKey: 'api-key',
-  authDomain: 'project-id.firebaseapp.com',
-  databaseURL: 'https://project-id.firebaseio.com',
-  projectId: 'project-id',
-  storageBucket: 'project-id.appspot.com',
-  messagingSenderId: 'sender-id',
-  appId: 'app-id',
-  measurementId: 'G-measurement-id',
+  apiKey: "AIzaSyB8MJ_i9v-nsGEKGfmQPFvOwstQ8NlQ0vI",
+  authDomain: "todoapp-ed658.firebaseapp.com",
+  projectId: "todoapp-ed658",
+  storageBucket: "todoapp-ed658.firebasestorage.app",
+  messagingSenderId: "921183358884",
+  appId: "1:921183358884:web:bd7094bae778ed71907b31"
 };
 
-const app = initializeApp(firebaseConfig);
-// For more information on how to access Firebase in your project,
-// see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
+export const FIREBASE_APP = initializeApp(firebaseConfig);
+export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
+export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
