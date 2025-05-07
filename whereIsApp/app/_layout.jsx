@@ -10,6 +10,8 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="addItem" />
+        <Stack.Screen name="listItem" />
       </Stack>
     </SafeAreaProvider>
   )
