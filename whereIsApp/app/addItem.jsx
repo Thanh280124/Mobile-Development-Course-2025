@@ -81,6 +81,7 @@ export default function AddItem() {
     Alert.alert("Success", "Item added successfully!");
     setFormData({ name: "", location: "", description: "", photoUri: null });
     setGpsCoordinates(null);
+    router.push("/");
   };
 
   const handleBackPress = () => {

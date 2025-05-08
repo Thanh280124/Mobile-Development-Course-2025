@@ -1,4 +1,4 @@
-import { Text, StyleSheet,View } from "react-native";
+import { Text, StyleSheet,View,Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import * as Font from 'expo-font';
@@ -16,6 +16,11 @@ export default function Index() {
   if (!fontsLoaded) return null;
   return (
     <SafeAreaView style={styles.container}>
+      <Image
+          source={require("../assets/images/logo.png")} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
       <Text style={styles.title}>Where Is App</Text>
 
       <Link href="/addItem" style={styles.button}>
@@ -66,5 +71,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Space-Mono"
+  },
+  logo: {
+    width: 200, 
+    height: 200,
+    marginBottom: 20,
+    borderRadius: 100,
   },
 });
