@@ -1,6 +1,5 @@
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "react-native";
 import { useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
@@ -8,6 +7,8 @@ import * as ImagePicker from "expo-image-picker"; // For camera
 import * as Location from "expo-location"; // For GPS
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For storage
+
 export default function AddItem() {
   // State for form inputs, photo, and GPS coordinates
   const [formData, setFormData] = useState({
@@ -71,17 +72,37 @@ export default function AddItem() {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, location, description, photoUri } = formData;
     if (!name || !location || !description) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
-    console.log("Form Data:", { name, location, description, photoUri, gpsCoordinates });
-    Alert.alert("Success", "Item added successfully!");
-    setFormData({ name: "", location: "", description: "", photoUri: null });
-    setGpsCoordinates(null);
-    router.push("/");
+    try {
+      // Create item object
+      const newItem = {
+        id: Date.now().toString(), // Unique ID based on timestamp
+        name,
+        location,
+        description,
+        photoUri,
+        gpsCoordinates,
+      };
+      // Get existing items from AsyncStorage
+      const storedItems = await AsyncStorage.getItem('items');
+      const items = storedItems ? JSON.parse(storedItems) : [];
+      // Add new item
+      items.push(newItem);
+      // Save back to AsyncStorage
+      await AsyncStorage.setItem('items', JSON.stringify(items));
+      Alert.alert("Success", "Item added successfully!");
+      setFormData({ name: "", location: "", description: "", photoUri: null });
+      setGpsCoordinates(null);
+      router.push("/listItem");
+    } catch (error) {
+      Alert.alert("Error", "Failed to save item. Please try again.");
+      console.error("AsyncStorage Error:", error);
+    }
   };
 
   const handleBackPress = () => {
@@ -99,7 +120,7 @@ export default function AddItem() {
           color="black"
           onPress={handleBackPress}
         />
-        <Text style={styles.headerText}>Let&apos;s Comeback</Text>
+        <Text style={styles.headerText}>Let's Comeback</Text>
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
