@@ -8,7 +8,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function ListItem() {
   const router = useRouter();
   const [items, setItems] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredItems, setFilteredItems] = useState([]);
   
   useEffect(() => {
     const loadItems = async () => {
@@ -34,6 +35,14 @@ export default function ListItem() {
       params: { item: JSON.stringify(item) }, 
     });
   };
+  const handleChangeSearch = (query) => {
+    setSearchQuery(query);
+   const filtered = items.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase()) ||
+      item.location.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredItems(filtered);
+  }
   
 
   const renderItem = ({ item }) => (
@@ -65,11 +74,15 @@ export default function ListItem() {
       
       <View style ={styles.searchContainer}>
         <MaterialIcons name="manage-search" size={27} color="black" />
-        <TextInput style={styles.searchInput} placeholder="Search items from your list" placeholderTextColor="#605e60"/>
+        <TextInput style={styles.searchInput} 
+        placeholder="Search items from your list" 
+        placeholderTextColor="#605e60"
+        value={searchQuery}
+        onChangeText={handleChangeSearch}/>
       </View>
       
       <FlatList
-        data={items}
+        data={filteredItems.length > 0 ? filteredItems : items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.scrollContent}
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#e7e7e7',
+    backgroundColor: '#eeeeee',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -141,11 +154,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 25,
     marginHorizontal: 18,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+    borderColor: "#000",
+    borderWidth: 3,
   },
   searchInput: {
     fontSize: 15,
