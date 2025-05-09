@@ -52,7 +52,7 @@ export default function ListItem() {
         <Text style={styles.textocation}>{item.location}</Text>
       </View>
       <Image
-        source={{ uri: item.photoUri}}
+        source={{ uri: item.photoUri || require("../assets/images/default.png") }} 
         style={styles.photoPreview}
         resizeMode="cover"
       /> 
