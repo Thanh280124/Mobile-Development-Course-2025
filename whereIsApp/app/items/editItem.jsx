@@ -1,53 +1,50 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
-import * as ImagePicker from "expo-image-picker"; // For camera
-import * as Location from "expo-location"; // For GPS
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // For storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function AddItem() {
- 
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    description: "",
-    photoUri: null, 
-  });
-  const [gpsCoordinates, setGpsCoordinates] = useState(null); 
-
+export default function EditItem() {
   const router = useRouter();
+  const { item } = useLocalSearchParams();
+  const itemData = item ? JSON.parse(item) : {};
 
+  const [formData, setFormData] = useState({
+    id: itemData.id || "",
+    name: itemData.name || "",
+    location: itemData.location || "",
+    description: itemData.description || "",
+    photoUri: itemData.photoUri || null,
+  });
+  const [gpsCoordinates, setGpsCoordinates] = useState(itemData.gpsCoordinates || null);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-
   const takePhoto = async () => {
-
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Error", "Camera permission is required to take photos.");
       return;
     }
 
-    
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true, 
+      allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.5, 
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setFormData((prev) => ({ ...prev, photoUri: result.assets[0].uri }));
     }
   };
-
 
   const getGPSLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -67,42 +64,32 @@ export default function AddItem() {
   };
 
   const handleSubmit = async () => {
-    const { name, location, description, photoUri } = formData;
+    const { id, name, location, description, photoUri } = formData;
     if (!name || !location || !description) {
-      Alert.alert("Error", "Please fill in all fields.");
+      Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
     try {
-
-      const newItem = {
-        id: Date.now().toString(), 
-        name,
-        location,
-        description,
-        photoUri,
-        gpsCoordinates,
-      };
-     
       const storedItems = await AsyncStorage.getItem('items');
-      const items = storedItems ? JSON.parse(storedItems) : [];
- 
-      items.push(newItem);
+      let items = storedItems ? JSON.parse(storedItems) : [];
+      items = items.map((i) =>
+        i.id === id ? { id, name, location, description, photoUri, gpsCoordinates } : i
+      );
       await AsyncStorage.setItem('items', JSON.stringify(items));
-      Alert.alert("Success", "Item added successfully!");
-      setFormData({ name: "", location: "", description: "", photoUri: null });
-      setGpsCoordinates(null);
+      Alert.alert("Success", "Item updated successfully!");
       router.push("/listItem");
     } catch (error) {
-      Alert.alert("Error", "Failed to save item. Please try again.");
+      Alert.alert("Error", "Failed to update item. Please try again.");
       console.error("AsyncStorage Error:", error);
     }
   };
 
   const handleBackPress = () => {
-    router.push("/");
-    setFormData({ name: "", location: "", description: "", photoUri: null });
-    setGpsCoordinates(null);
-  }
+    router.push({
+      pathname: "/ItemDetails",
+      params: { item: JSON.stringify(itemData) },
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,14 +100,13 @@ export default function AddItem() {
           color="black"
           onPress={handleBackPress}
         />
-        <Text style={styles.headerText}>Let&apos;s Comeback</Text>
+        <Text style={styles.headerText}>Back to Details</Text>
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Add New Item</Text>
+          <Text style={styles.title}>Edit Item</Text>
 
-         
           <Text style={styles.label}>Item Name *</Text>
           <TextInput
             style={styles.input}
@@ -130,7 +116,6 @@ export default function AddItem() {
             onChangeText={(text) => handleInputChange("name", text)}
           />
 
-     
           <Text style={styles.label}>Location *</Text>
           <TextInput
             style={styles.input}
@@ -140,7 +125,6 @@ export default function AddItem() {
             onChangeText={(text) => handleInputChange("location", text)}
           />
 
-          
           <Text style={styles.label}>Description *</Text>
           <TextInput
             style={[styles.input, styles.descriptionInput]}
@@ -152,10 +136,11 @@ export default function AddItem() {
             numberOfLines={4}
           />
 
-         
           <View style={styles.photoContainer}>
             <TouchableOpacity style={styles.button} onPress={takePhoto}>
-              <Text style={styles.buttonText}><MaterialIcons name="add-to-photos" size={20} color="white" /> Take Photo</Text>
+              <Text style={styles.buttonText}>
+                <MaterialIcons name="add-to-photos" size={20} color="white" /> Update Photo
+              </Text>
             </TouchableOpacity>
             {formData.photoUri && (
               <Image
@@ -166,15 +151,17 @@ export default function AddItem() {
             )}
           </View>
 
-        
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" /> Add Item</Text>
+            <Text style={styles.buttonText}>
+              <MaterialIcons name="save" size={20} color="white" /> Save Changes
+            </Text>
           </TouchableOpacity>
 
-         
           <View style={styles.gpsContainer}>
             <TouchableOpacity style={styles.button} onPress={getGPSLocation}>
-              <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" /> Get GPS Location</Text>
+              <Text style={styles.buttonText}>
+                <MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" /> Update GPS Location
+              </Text>
             </TouchableOpacity>
             {gpsCoordinates && (
               <Text style={styles.gpsText}>
@@ -219,7 +206,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 40,
-    fontFamily:'Tagess-Reg',
+    fontFamily: 'Tagess-Reg',
     marginBottom: 40,
     textAlign: "center",
   },
@@ -247,10 +234,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   photoPreview: {
-    width: 300,
-    height: 300,
+    width: 390,
+    height: 250,
     marginTop: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     alignSelf: "center",
   },
   gpsContainer: {
@@ -270,14 +257,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
     alignItems: "center",
-    width: "70%",
-    alignSelf: "center",
+    width: "100%",
   },
   buttonText: {
     color: "#FFFFFF",
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: "500",
-    fontFamily: "Space-Mono", 
+    fontFamily: "Space-Mono",
     alignSelf: "center",
   },
 });

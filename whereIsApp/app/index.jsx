@@ -24,15 +24,15 @@ export default function Index() {
       <Text style={styles.title}>Where Is App</Text>
 
       <Link href="/addItem" style={styles.button}>
-      <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
-      <MaterialIcons name="format-list-bulleted-add" size={24} color="white" />
+      <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
+      <MaterialIcons name="format-list-bulleted-add" size={33} color="white" />
       <Text style={styles.buttonText}> Add Items</Text>
       </View>
       </Link>
     
       <Link href="/listItem" style={styles.button}>
       <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
-      <FontAwesome6 name="table-list" size={20} color="white" />
+      <FontAwesome6 name="table-list" size={25} color="white" />
       <Text style={styles.buttonText}> List Items</Text>
       </View>
       </Link>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 44,
+    fontSize: 45,
     fontFamily: "Playwrite-RO",
     fontWeight:'semibold',
     color: "#000000",
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 25,
     fontWeight: "600",
     fontFamily: "Space-Mono"
   },

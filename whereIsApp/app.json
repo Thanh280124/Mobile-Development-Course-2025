@@ -4,7 +4,7 @@
     "slug": "WhereIsApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/splash-icon.png",
     "scheme": "whereisapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,15 +18,15 @@
     "android": {
       "permissions": ["CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/splash-icon.png",
+        "backgroundColor": "#030303"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/splash-icon.png"
     },
     "plugins": [
       "expo-router",
@@ -36,7 +36,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#030303"
         }
       ],
       "expo-font"

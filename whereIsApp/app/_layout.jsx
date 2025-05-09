@@ -13,6 +13,7 @@ export default function RootLayout() {
         <Stack.Screen name="addItem" />
         <Stack.Screen name="listItem" />
         <Stack.Screen name="items/[id]" />
+        <Stack.Screen name="items/editItem" />
       </Stack>
     </SafeAreaProvider>
   )

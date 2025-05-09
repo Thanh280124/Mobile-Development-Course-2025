@@ -1,15 +1,15 @@
-import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity, StatusBar,Pressable } from "react-native";
+import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity, StatusBar,TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function ListItem() {
   const router = useRouter();
   const [items, setItems] = useState([]);
 
-  // Fetch items from AsyncStorage when component mounts
+  
   useEffect(() => {
     const loadItems = async () => {
       try {
@@ -43,7 +43,7 @@ export default function ListItem() {
         <Text style={styles.textocation}>{item.location}</Text>
       </View>
       <Image
-        source={{ uri: item.photoUri || 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fGZpbGxlfGVufDB8fHx8MTY5MjQ1NTQ3Ng&ixlib=rb-4.0.3&q=80&w=400' }}
+        source={{ uri: item.photoUri}}
         style={styles.photoPreview}
         resizeMode="cover"
       /> 
@@ -59,9 +59,15 @@ export default function ListItem() {
           color="black"
           onPress={handleBackPress}
         />
-        <Text style={styles.headerText}>Let's Comeback</Text>
+        <Text style={styles.headerText}>Let&apos;s Comeback</Text>
       </View>
-
+        <Text style ={styles.title}>List of all Items</Text>
+      
+      <View style ={styles.searchContainer}>
+        <MaterialIcons name="manage-search" size={27} color="black" />
+        <TextInput style={styles.searchInput} placeholder="Search items from your list" placeholderTextColor="#605e60"/>
+      </View>
+      
       <FlatList
         data={items}
         renderItem={renderItem}
@@ -96,9 +102,10 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontFamily: 'Tagess-Reg',
     marginBottom: 40,
+    marginTop: 30,
     textAlign: "center",
   },
   card: {
@@ -129,5 +136,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 5,
     alignSelf: "center",
+  },
+  searchContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+    marginHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  searchInput: {
+    fontSize: 15,
+    color: "#000",
+    fontFamily: 'Space-Mono',
   },
 });
