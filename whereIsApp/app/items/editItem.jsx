@@ -17,7 +17,6 @@ export default function EditItem() {
   const [formData, setFormData] = useState({
     id: itemData.id || "",
     name: itemData.name || "",
-    location: itemData.location || "",
     description: itemData.description || "",
     photoUri: itemData.photoUri || null,
   });
@@ -63,30 +62,56 @@ export default function EditItem() {
     }
   };
 
-  const handleSubmit = async () => {
-    const { id, name, location, description, photoUri } = formData;
-    if (!name || !location || !description) {
-      Alert.alert("Error", "Please fill in all required fields.");
+ const handleSubmit = async () => {
+  const { id, name, description, photoUri } = formData;
+
+ if (!name && !description) {
+      Alert.alert("You should add the name and description of the item");
+      return;
+    }else if (!description) {
+      Alert.alert("You should add the description of the item");
+      return;
+    }else if (!name) {
+      Alert.alert("You should add the name of the item");
       return;
     }
-    try {
-      const storedItems = await AsyncStorage.getItem('items');
-      let items = storedItems ? JSON.parse(storedItems) : [];
-      items = items.map((i) =>
-        i.id === id ? { id, name, location, description, photoUri, gpsCoordinates } : i
-      );
-      await AsyncStorage.setItem('items', JSON.stringify(items));
-      Alert.alert("Success", "Item updated successfully!");
-      router.push("/listItem");
-    } catch (error) {
-      Alert.alert("Error", "Failed to update item. Please try again.");
-      console.error("AsyncStorage Error:", error);
-    }
-  };
+
+  Alert.alert(
+    "Confirm To Update Item",
+    "Are you sure you want to save the changes?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Save",
+        onPress: async () => {
+          try {
+            const storedItems = await AsyncStorage.getItem('items');
+            let items = storedItems ? JSON.parse(storedItems) : [];
+
+            items = items.map((i) =>
+              i.id === id ? { id, name, description, photoUri, gpsCoordinates } : i
+            );
+
+            await AsyncStorage.setItem('items', JSON.stringify(items));
+            Alert.alert("Success", "Item updated successfully!");
+            router.push("/listItem");
+          } catch (error) {
+            Alert.alert("Error", "Failed to update item. Please try again.");
+            console.error("AsyncStorage Error:", error);
+          }
+        },
+      },
+    ]
+  );
+};
+
 
   const handleBackPress = () => {
     router.push({
-      pathname: "/ItemDetails",
+      pathname: `/items/${itemData.id}`,
       params: { item: JSON.stringify(itemData) },
     });
   };
@@ -114,15 +139,6 @@ export default function EditItem() {
             placeholderTextColor="#605e60"
             value={formData.name}
             onChangeText={(text) => handleInputChange("name", text)}
-          />
-
-          <Text style={styles.label}>Location *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Where is it?"
-            placeholderTextColor="#605e60"
-            value={formData.location}
-            onChangeText={(text) => handleInputChange("location", text)}
           />
 
           <Text style={styles.label}>Description *</Text>

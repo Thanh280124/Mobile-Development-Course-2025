@@ -39,7 +39,7 @@ export default function ListItem() {
     setSearchQuery(query);
    const filtered = items.filter((item) =>
       item.name.toLowerCase().includes(query.toLowerCase()) ||
-      item.location.toLowerCase().includes(query.toLowerCase())
+      item.description.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredItems(filtered);
   }
@@ -49,7 +49,7 @@ export default function ListItem() {
     <TouchableOpacity style={styles.card} onPress={() => handleItemPress(item)}>
       <View style={styles.cardText}>
         <Text style={styles.textName}>{item.name}</Text>
-        <Text style={styles.textocation}>{item.location}</Text>
+        <Text style={styles.textocation}>{item.description}</Text>
       </View>
       <Image
         source={item.photoUri ? { uri: item.photoUri } : require('../assets/images/default.png')} 

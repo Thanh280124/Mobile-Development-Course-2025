@@ -100,9 +100,6 @@ export default function ItemDetails() {
 
 
           <View style={styles.detailContainer}>
-            <Text style={styles.label}>Location</Text>
-            <Text style={styles.detailText}>{itemData.location || "N/A"}</Text>
-
             <Text style={styles.label}>Description</Text>
             <Text style={styles.detailText}>{itemData.description || "N/A"}</Text>
 
@@ -110,7 +107,7 @@ export default function ItemDetails() {
               <>
                 <Text style={styles.label}>GPS Coordinates</Text>
                 <Text style={styles.detailText}>
-                  Latitude: {itemData.gpsCoordinates.latitude.toFixed(4)}, Longitude: {itemData.gpsCoordinates.longitude.toFixed(4)}
+                  Latitude: {itemData.gpsCoordinates.latitude.toFixed(4) || "You don't need this"}, Longitude: {itemData.gpsCoordinates.longitude.toFixed(4) || "You don't need this"}
                 </Text>
               </>
             )}
@@ -133,7 +130,7 @@ export default function ItemDetails() {
                   longitude: itemData.gpsCoordinates.longitude,
                 }}
                 title={itemData.name}
-                description={itemData.location}
+                description={itemData.description}
               />
             </MapView>
           )}
@@ -215,7 +212,7 @@ const styles = StyleSheet.create({
   },
   photoPreview: {
     width: 390,
-    height: 230,
+    height: 340,
     marginTop: 10,
     borderRadius: 10,
     alignSelf: "center",

@@ -13,7 +13,6 @@ export default function AddItem() {
  
   const [formData, setFormData] = useState({
     name: "",
-    location: "",
     description: "",
     photoUri: null, 
   });
@@ -67,17 +66,23 @@ export default function AddItem() {
   };
 
   const handleSubmit = async () => {
-    const { name, location, description, photoUri } = formData;
-    if (!name || !location || !description) {
-      Alert.alert("Error", "Please fill in all fields.");
+    const { name, description, photoUri } = formData;
+     if (!name && !description) {
+      Alert.alert("You should add the name and description of the item");
+      return;
+    }else if (!description) {
+      Alert.alert("You should add the description of the item");
+      return;
+    }else if (!name) {
+      Alert.alert("You should add the name of the item");
       return;
     }
+
     try {
 
       const newItem = {
         id: Date.now().toString(), 
         name,
-        location,
         description,
         photoUri,
         gpsCoordinates,
@@ -88,19 +93,19 @@ export default function AddItem() {
  
       items.push(newItem);
       await AsyncStorage.setItem('items', JSON.stringify(items));
-      Alert.alert("Success", "Item added successfully!");
-      setFormData({ name: "", location: "", description: "", photoUri: null });
+      Alert.alert("Perfect", "Item added successfully!");
+      setFormData({ name: "", description: "", photoUri: null });
       setGpsCoordinates(null);
       router.push("/listItem");
     } catch (error) {
-      Alert.alert("Error", "Failed to save item. Please try again.");
+      Alert.alert("Something wrong happned", "Failed to save item. Please try again.");
       console.error("AsyncStorage Error:", error);
     }
   };
 
   const handleBackPress = () => {
     router.push("/");
-    setFormData({ name: "", location: "", description: "", photoUri: null });
+    setFormData({ name: "", description: "", photoUri: null });
     setGpsCoordinates(null);
   }
 
@@ -129,22 +134,11 @@ export default function AddItem() {
             value={formData.name}
             onChangeText={(text) => handleInputChange("name", text)}
           />
-
      
-          <Text style={styles.label}>Location *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Where is it?"
-            placeholderTextColor="#605e60"
-            value={formData.location}
-            onChangeText={(text) => handleInputChange("location", text)}
-          />
-
-          
           <Text style={styles.label}>Description *</Text>
           <TextInput
             style={[styles.input, styles.descriptionInput]}
-            placeholder="Add some description about the item"
+            placeholder="Add description and location about the item"
             placeholderTextColor="#605e60"
             value={formData.description}
             onChangeText={(text) => handleInputChange("description", text)}
@@ -178,7 +172,7 @@ export default function AddItem() {
             </TouchableOpacity>
             {gpsCoordinates && (
               <Text style={styles.gpsText}>
-                Latitude: {gpsCoordinates.latitude.toFixed(4)}, Longitude: {gpsCoordinates.longitude.toFixed(4)}
+                Latitude: {gpsCoordinates.latitude.toFixed(2)}, Longitude: {gpsCoordinates.longitude.toFixed(4)}
               </Text>
             )}
           </View>
@@ -257,9 +251,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   gpsText: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#333",
-    marginTop: 10,
+    marginTop: 15,
     textAlign: "center",
     fontFamily: 'Space-Mono',
   },
