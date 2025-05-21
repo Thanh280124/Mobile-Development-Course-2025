@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   photoPreview: {
-    width: 300,
+    width: 400,
     height: 300,
     marginTop: 10,
     borderRadius: 5,
