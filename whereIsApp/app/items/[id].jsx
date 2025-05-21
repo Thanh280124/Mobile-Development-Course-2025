@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { useState } from "react";
 
 export default function ItemDetails() {
@@ -34,7 +34,7 @@ export default function ItemDetails() {
       }
     } catch (error) {
       Alert.alert("Error", "Failed to open Google Maps. Please try again.");
-      console.error("Linking Error:", error);
+      console.error("Linking Error:", error.message);
     }
   };
 
@@ -56,15 +56,21 @@ export default function ItemDetails() {
           style: "destructive",
           onPress: async () => {
             try {
-              const storedItems = await AsyncStorage.getItem('items');
+              const storedItems = await SecureStore.getItemAsync('items');
               let items = storedItems ? JSON.parse(storedItems) : [];
+              console.log("Current items before deleting:", items);
+
               items = items.filter((i) => i.id !== itemData.id);
-              await AsyncStorage.setItem('items', JSON.stringify(items));
+              const itemsString = JSON.stringify(items);
+              console.log("Data to store securely after deletion:", itemsString);
+              await SecureStore.setItemAsync('items', itemsString);
+              console.log("Item deleted successfully from SecureStore");
+
               Alert.alert("Success", "Item deleted successfully!");
               router.push("/listItem");
             } catch (error) {
+              console.error("SecureStore Error:", error.message);
               Alert.alert("Error", "Failed to delete item. Please try again.");
-              console.error("AsyncStorage Error:", error);
             }
           },
         },
@@ -89,15 +95,12 @@ export default function ItemDetails() {
           <Text style={styles.title}>{itemData.name || "Item Details"}</Text>
 
           {itemData.photoUri && (
-            <>
-              <Image
-                source={{ uri: itemData.photoUri }}
-                style={styles.photoPreview}
-                resizeMode="cover"
-              />
-            </>
+            <Image
+              source={{ uri: itemData.photoUri }}
+              style={styles.photoPreview}
+              resizeMode="cover"
+            />
           )}
-
 
           <View style={styles.detailContainer}>
             <Text style={styles.label}>Description</Text>
@@ -115,25 +118,25 @@ export default function ItemDetails() {
         </View>
 
         {showMap && itemData.gpsCoordinates && (
-            <MapView
-              style={styles.map}
-              initialRegion={{
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: itemData.gpsCoordinates.latitude,
+              longitude: itemData.gpsCoordinates.longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+          >
+            <Marker
+              coordinate={{
                 latitude: itemData.gpsCoordinates.latitude,
                 longitude: itemData.gpsCoordinates.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
               }}
-            >
-              <Marker
-                coordinate={{
-                  latitude: itemData.gpsCoordinates.latitude,
-                  longitude: itemData.gpsCoordinates.longitude,
-                }}
-                title={itemData.name}
-                description={itemData.description}
-              />
-            </MapView>
-          )}
+              title={itemData.name}
+              description={itemData.description}
+            />
+          </MapView>
+        )}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleViewOnMap}>

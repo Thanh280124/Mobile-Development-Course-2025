@@ -7,7 +7,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 export default function EditItem() {
   const router = useRouter();
@@ -58,56 +58,60 @@ export default function EditItem() {
       setGpsCoordinates({ latitude, longitude });
     } catch (error) {
       Alert.alert("Error", "Unable to get location. Please try again.");
-      console.error("GPS Error:", error);
+      console.error("GPS Error:", error.message);
     }
   };
 
- const handleSubmit = async () => {
-  const { id, name, description, photoUri } = formData;
+  const handleSubmit = async () => {
+    const { id, name, description, photoUri } = formData;
 
- if (!name && !description) {
+    if (!name && !description) {
       Alert.alert("You should add the name and description of the item");
       return;
-    }else if (!description) {
+    } else if (!description) {
       Alert.alert("You should add the description of the item");
       return;
-    }else if (!name) {
+    } else if (!name) {
       Alert.alert("You should add the name of the item");
       return;
     }
 
-  Alert.alert(
-    "Confirm To Update Item",
-    "Are you sure you want to save the changes?",
-    [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Save",
-        onPress: async () => {
-          try {
-            const storedItems = await AsyncStorage.getItem('items');
-            let items = storedItems ? JSON.parse(storedItems) : [];
-
-            items = items.map((i) =>
-              i.id === id ? { id, name, description, photoUri, gpsCoordinates } : i
-            );
-
-            await AsyncStorage.setItem('items', JSON.stringify(items));
-            Alert.alert("Success", "Item updated successfully!");
-            router.push("/listItem");
-          } catch (error) {
-            Alert.alert("Error", "Failed to update item. Please try again.");
-            console.error("AsyncStorage Error:", error);
-          }
+    Alert.alert(
+      "Confirm To Update Item",
+      "Are you sure you want to save the changes?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
         },
-      },
-    ]
-  );
-};
+        {
+          text: "Save",
+          onPress: async () => {
+            try {
+              const storedItems = await SecureStore.getItemAsync('items');
+              let items = storedItems ? JSON.parse(storedItems) : [];
+              console.log("Current items before updating:", items);
 
+              items = items.map((i) =>
+                i.id === id ? { id, name, description, photoUri, gpsCoordinates } : i
+              );
+
+              const itemsString = JSON.stringify(items);
+              console.log("Data to store securely:", itemsString);
+              await SecureStore.setItemAsync('items', itemsString);
+              console.log("Item updated successfully in SecureStore");
+
+              Alert.alert("Success", "Item updated successfully!");
+              router.push("/listItem");
+            } catch (error) {
+              console.error("SecureStore Error:", error.message);
+              Alert.alert("Error", "Failed to update item. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const handleBackPress = () => {
     router.push({

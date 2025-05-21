@@ -3,50 +3,43 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
-import * as ImagePicker from "expo-image-picker"; 
-import * as Location from "expo-location"; 
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import * as SecureStore from 'expo-secure-store';
 
 export default function AddItem() {
- 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    photoUri: null, 
+    photoUri: null,
   });
-  const [gpsCoordinates, setGpsCoordinates] = useState(null); 
-
+  const [gpsCoordinates, setGpsCoordinates] = useState(null);
   const router = useRouter();
-
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-
   const takePhoto = async () => {
-
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Error", "Camera permission is required to take photos.");
       return;
     }
 
-    
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true, 
+      allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.5, 
+      quality: 0.3, 
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setFormData((prev) => ({ ...prev, photoUri: result.assets[0].uri }));
     }
   };
-
 
   const getGPSLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -61,45 +54,50 @@ export default function AddItem() {
       setGpsCoordinates({ latitude, longitude });
     } catch (error) {
       Alert.alert("Error", "Unable to get location. Please try again.");
-      console.error("GPS Error:", error);
+      console.error("GPS Error:", error.message);
     }
   };
 
   const handleSubmit = async () => {
     const { name, description, photoUri } = formData;
-     if (!name && !description) {
+    if (!name && !description) {
       Alert.alert("You should add the name and description of the item");
       return;
-    }else if (!description) {
+    } else if (!description) {
       Alert.alert("You should add the description of the item");
       return;
-    }else if (!name) {
+    } else if (!name) {
       Alert.alert("You should add the name of the item");
       return;
     }
 
     try {
-
       const newItem = {
-        id: Date.now().toString(), 
+        id: Date.now().toString(),
         name,
         description,
         photoUri,
         gpsCoordinates,
       };
-     
-      const storedItems = await AsyncStorage.getItem('items');
+
+      const storedItems = await SecureStore.getItemAsync('items');
       const items = storedItems ? JSON.parse(storedItems) : [];
- 
+      console.log("Current items before adding:", items);
+      console.log("New item to add:", newItem);
+
       items.push(newItem);
-      await AsyncStorage.setItem('items', JSON.stringify(items));
+      const itemsString = JSON.stringify(items);
+      console.log("Data to store securely:", itemsString);
+      await SecureStore.setItemAsync('items', itemsString);
+      console.log("Item stored successfully in SecureStore");
+
       Alert.alert("Perfect", "Item added successfully!");
       setFormData({ name: "", description: "", photoUri: null });
       setGpsCoordinates(null);
       router.push("/listItem");
     } catch (error) {
-      Alert.alert("Something wrong happned", "Failed to save item. Please try again.");
-      console.error("AsyncStorage Error:", error);
+      console.error("SecureStore Error:", error.message);
+      Alert.alert("Error", "Failed to save item. Please try again.");
     }
   };
 
@@ -107,7 +105,7 @@ export default function AddItem() {
     router.push("/");
     setFormData({ name: "", description: "", photoUri: null });
     setGpsCoordinates(null);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -125,7 +123,6 @@ export default function AddItem() {
         <View style={styles.formContainer}>
           <Text style={styles.title}>Add New Item</Text>
 
-         
           <Text style={styles.label}>Item Name *</Text>
           <TextInput
             style={styles.input}
@@ -134,7 +131,7 @@ export default function AddItem() {
             value={formData.name}
             onChangeText={(text) => handleInputChange("name", text)}
           />
-     
+
           <Text style={styles.label}>Description *</Text>
           <TextInput
             style={[styles.input, styles.descriptionInput]}
@@ -146,7 +143,6 @@ export default function AddItem() {
             numberOfLines={4}
           />
 
-         
           <View style={styles.photoContainer}>
             <TouchableOpacity style={styles.button} onPress={takePhoto}>
               <Text style={styles.buttonText}><MaterialIcons name="add-to-photos" size={20} color="white" /> Take Photo</Text>
@@ -160,12 +156,10 @@ export default function AddItem() {
             )}
           </View>
 
-        
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" /> Add Item</Text>
           </TouchableOpacity>
 
-         
           <View style={styles.gpsContainer}>
             <TouchableOpacity style={styles.button} onPress={getGPSLocation}>
               <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" /> Get GPS Location</Text>
@@ -213,7 +207,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 40,
-    fontFamily:'Tagess-Reg',
+    fontFamily: 'Tagess-Reg',
     marginBottom: 40,
     textAlign: "center",
   },
@@ -271,7 +265,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 19,
     fontWeight: "500",
-    fontFamily: "Space-Mono", 
+    fontFamily: "Space-Mono",
     alignSelf: "center",
   },
 });

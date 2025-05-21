@@ -1,25 +1,30 @@
-import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity, StatusBar,TextInput } from "react-native";
+import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity,Alert, StatusBar, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 export default function ListItem() {
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
-  
+
   useEffect(() => {
     const loadItems = async () => {
       try {
-        const storedItems = await AsyncStorage.getItem('items');
+        const storedItems = await SecureStore.getItemAsync('items');
+        console.log("Retrieved data from SecureStore:", storedItems);
         if (storedItems) {
-          setItems(JSON.parse(storedItems));
+          const parsedItems = JSON.parse(storedItems);
+          setItems(parsedItems);
+          console.log("Parsed items:", parsedItems);
         }
       } catch (error) {
-        console.error("Error loading items:", error);
+        console.error("SecureStore Error:", error.message);
+        Alert.alert("Error", "Failed to load items. Please try again.");
       }
     };
     loadItems();
@@ -32,18 +37,18 @@ export default function ListItem() {
   const handleItemPress = (item) => {
     router.push({
       pathname: `/items/${item.id}`,
-      params: { item: JSON.stringify(item) }, 
+      params: { item: JSON.stringify(item) },
     });
   };
+
   const handleChangeSearch = (query) => {
     setSearchQuery(query);
-   const filtered = items.filter((item) =>
+    const filtered = items.filter((item) =>
       item.name.toLowerCase().includes(query.toLowerCase()) ||
       item.description.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredItems(filtered);
-  }
-  
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleItemPress(item)}>
@@ -52,10 +57,10 @@ export default function ListItem() {
         <Text style={styles.textocation}>{item.description}</Text>
       </View>
       <Image
-        source={item.photoUri ? { uri: item.photoUri } : require('../assets/images/default.png')} 
+        source={item.photoUri ? { uri: item.photoUri } : require('../assets/images/default.png')}
         style={styles.photoPreview}
         resizeMode="cover"
-      /> 
+      />
     </TouchableOpacity>
   );
 
@@ -70,17 +75,19 @@ export default function ListItem() {
         />
         <Text style={styles.headerText}>Let&apos;s Comeback</Text>
       </View>
-        <Text style ={styles.title}>List of all Items</Text>
-      
-      <View style ={styles.searchContainer}>
+      <Text style={styles.title}>List of all Items</Text>
+
+      <View style={styles.searchContainer}>
         <MaterialIcons name="manage-search" size={27} color="black" />
-        <TextInput style={styles.searchInput} 
-        placeholder="Search items from your list" 
-        placeholderTextColor="#605e60"
-        value={searchQuery}
-        onChangeText={handleChangeSearch}/>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search items from your list"
+          placeholderTextColor="#605e60"
+          value={searchQuery}
+          onChangeText={handleChangeSearch}
+        />
       </View>
-      
+
       <FlatList
         data={filteredItems.length > 0 ? filteredItems : items}
         renderItem={renderItem}
