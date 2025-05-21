@@ -59,7 +59,7 @@ export default function ListItem() {
       <Image
         source={item.photoUri ? { uri: item.photoUri } : require('../assets/images/default.png')}
         style={styles.photoPreview}
-        resizeMode="cover"
+        resizeMode="contain"
       />
     </TouchableOpacity>
   );
