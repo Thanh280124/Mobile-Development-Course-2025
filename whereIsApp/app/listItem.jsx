@@ -134,12 +134,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#eeeeee',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderRadius: 10,
     marginBottom: 30,
+    gap: 10,
   },
   cardText: {
     gap: 10,
+    flex: 1,
+    width: '70%',
   },
   textName: {
     fontSize: 25,

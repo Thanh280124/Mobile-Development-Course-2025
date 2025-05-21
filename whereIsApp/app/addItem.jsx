@@ -87,9 +87,7 @@ export default function AddItem() {
 
       items.push(newItem);
       const itemsString = JSON.stringify(items);
-      console.log("Data to store securely:", itemsString);
       await SecureStore.setItemAsync('items', itemsString);
-      console.log("Item stored successfully in SecureStore");
 
       Alert.alert("Perfect", "Item added successfully!");
       setFormData({ name: "", description: "", photoUri: null });
@@ -144,16 +142,16 @@ export default function AddItem() {
           />
 
           <View style={styles.photoContainer}>
-            <TouchableOpacity style={styles.button} onPress={takePhoto}>
-              <Text style={styles.buttonText}><MaterialIcons name="add-to-photos" size={20} color="white" /> Take Photo</Text>
-            </TouchableOpacity>
-            {formData.photoUri && (
+             {formData.photoUri && (
               <Image
                 source={{ uri: formData.photoUri }}
                 style={styles.photoPreview}
                 resizeMode="cover"
               />
             )}
+            <TouchableOpacity style={styles.button} onPress={takePhoto}>
+              <Text style={styles.buttonText}><MaterialIcons name="add-to-photos" size={20} color="white" /> Take Photo</Text>
+            </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -235,9 +233,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   photoPreview: {
-    width: 400,
+    width: 390,
     height: 300,
     marginTop: 10,
+    marginBottom: 20,
     borderRadius: 5,
     alignSelf: "center",
   },
