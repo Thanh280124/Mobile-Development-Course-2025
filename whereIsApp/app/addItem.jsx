@@ -3,11 +3,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
-import * as ImagePicker from "expo-image-picker"; // For camera
-import * as Location from "expo-location"; // For GPS
+import * as ImagePicker from "expo-image-picker"; 
+import * as Location from "expo-location"; 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // For storage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 export default function AddItem() {
  
