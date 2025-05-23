@@ -160,7 +160,7 @@ export default function AddItem() {
 
           <View style={styles.gpsContainer}>
             <TouchableOpacity style={styles.button} onPress={getGPSLocation}>
-              <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" /> Get GPS Location</Text>
+              <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" />Get GPS Location</Text>
             </TouchableOpacity>
             {gpsCoordinates && (
               <Text style={styles.gpsText}>
@@ -262,9 +262,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#FFFFFF",
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: "500",
     fontFamily: "Space-Mono",
     alignSelf: "center",
+    
   },
 });
