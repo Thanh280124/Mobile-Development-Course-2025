@@ -94,13 +94,20 @@ export default function ItemDetails() {
         <View style={styles.formContainer}>
           <Text style={styles.title}>{itemData.name || "Item Details"}</Text>
 
-          {itemData.photoUri && (
-            <Image
-              source={{ uri: itemData.photoUri }}
-              style={styles.photoPreview}
-              resizeMode="cover"
-            />
-          )}
+          {itemData.photoUri ? (
+  <Image
+    source={{ uri: itemData.photoUri }}
+    style={styles.photoPreview}
+    resizeMode="cover"
+  />
+) : (
+  <Image
+    source={require('../../assets/images/nopicture.png')}
+    style={styles.photoPreview}
+    resizeMode="cover"
+  />
+)}
+
 
           <View style={styles.detailContainer}>
             <Text style={styles.label}>Description</Text>
@@ -215,7 +222,7 @@ const styles = StyleSheet.create({
   },
   photoPreview: {
     width: 390,
-    height: 340,
+    height: 330,
     marginTop: 10,
     borderRadius: 10,
     alignSelf: "center",
