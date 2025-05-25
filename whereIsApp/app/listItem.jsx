@@ -16,7 +16,6 @@ export default function ListItem() {
     const loadItems = async () => {
       try {
         const storedItems = await SecureStore.getItemAsync('items');
-        console.log("Retrieved data from SecureStore:", storedItems);
         if (storedItems) {
           const parsedItems = JSON.parse(storedItems);
           setItems(parsedItems);

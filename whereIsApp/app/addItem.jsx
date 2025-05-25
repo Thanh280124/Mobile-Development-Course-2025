@@ -82,8 +82,6 @@ export default function AddItem() {
 
       const storedItems = await SecureStore.getItemAsync('items');
       const items = storedItems ? JSON.parse(storedItems) : [];
-      console.log("Current items before adding:", items);
-      console.log("New item to add:", newItem);
 
       items.push(newItem);
       const itemsString = JSON.stringify(items);
