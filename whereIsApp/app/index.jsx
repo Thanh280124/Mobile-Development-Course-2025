@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 45,
+    fontSize: 40,
     fontFamily: "Playwrite-RO",
     fontWeight:'semibold',
     color: "#000000",

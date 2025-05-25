@@ -20,7 +20,6 @@ export default function ListItem() {
         if (storedItems) {
           const parsedItems = JSON.parse(storedItems);
           setItems(parsedItems);
-          console.log("Parsed items:", parsedItems);
         }
       } catch (error) {
         console.error("SecureStore Error:", error.message);
