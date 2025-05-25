@@ -58,11 +58,8 @@ export default function ItemDetails() {
             try {
               const storedItems = await SecureStore.getItemAsync('items');
               let items = storedItems ? JSON.parse(storedItems) : [];
-              console.log("Current items before deleting:", items);
-
               items = items.filter((i) => i.id !== itemData.id);
               const itemsString = JSON.stringify(items);
-              console.log("Data to store securely after deletion:", itemsString);
               await SecureStore.setItemAsync('items', itemsString);
               console.log("Item deleted successfully from SecureStore");
 

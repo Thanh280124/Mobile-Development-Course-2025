@@ -90,14 +90,12 @@ export default function EditItem() {
             try {
               const storedItems = await SecureStore.getItemAsync('items');
               let items = storedItems ? JSON.parse(storedItems) : [];
-              console.log("Current items before updating:", items);
+              
 
               items = items.map((i) =>
                 i.id === id ? { id, name, description, photoUri, gpsCoordinates } : i
               );
-
               const itemsString = JSON.stringify(items);
-              console.log("Data to store securely:", itemsString);
               await SecureStore.setItemAsync('items', itemsString);
               console.log("Item updated successfully in SecureStore");
 
