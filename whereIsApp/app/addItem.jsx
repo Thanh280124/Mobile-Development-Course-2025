@@ -153,7 +153,7 @@ export default function AddItem() {
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" /> Add Item</Text>
+            <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" />Save Item</Text>
           </TouchableOpacity>
 
           <View style={styles.gpsContainer}>

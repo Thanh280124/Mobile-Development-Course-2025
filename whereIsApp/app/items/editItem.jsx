@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     fontFamily: 'Tagess-Reg',
-    marginBottom: 40,
+    marginBottom: 20,
     textAlign: "center",
   },
   label: {
