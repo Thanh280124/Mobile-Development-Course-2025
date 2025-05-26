@@ -153,12 +153,12 @@ export default function AddItem() {
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" />Save Item</Text>
+            <Text style={styles.buttonText}><MaterialIcons name="add-task" size={20} color="white" /> Add Item</Text>
           </TouchableOpacity>
 
           <View style={styles.gpsContainer}>
             <TouchableOpacity style={styles.button} onPress={getGPSLocation}>
-              <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" />Get GPS Location</Text>
+              <Text style={styles.buttonText}><MaterialCommunityIcons name="crosshairs-gps" size={20} color="white" /> Get GPS Location</Text>
             </TouchableOpacity>
             {gpsCoordinates && (
               <Text style={styles.gpsText}>
@@ -168,7 +168,6 @@ export default function AddItem() {
           </View>
         </View>
       </ScrollView>
-
       <StatusBar backgroundColor="#63D8FE" barStyle="dark-content" />
     </SafeAreaView>
   );
@@ -264,6 +263,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontFamily: "Space-Mono",
     alignSelf: "center",
-    
   },
 });

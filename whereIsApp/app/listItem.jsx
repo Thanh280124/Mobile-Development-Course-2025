@@ -174,5 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#000",
     fontFamily: 'Space-Mono',
+    width: '100%',
   },
 });
